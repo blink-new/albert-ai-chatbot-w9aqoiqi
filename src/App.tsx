@@ -7,8 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from './components/ui/avatar'
 import { ScrollArea } from './components/ui/scroll-area'
 import { Dialog, DialogContent, DialogTitle } from './components/ui/dialog'
 import { Textarea } from './components/ui/textarea'
-import { TicTacToe, GameState } from './components/TicTacToe'
 import { Send, Book, User, Loader2, Image, Video, Camera, Film, Settings as SettingsIcon, Gamepad2, RefreshCw } from 'lucide-react'
+import { TicTacToe } from './components/TicTacToe'
 
 interface Message {
   id: string
@@ -225,70 +225,6 @@ function App() {
       }
     ])
     setInput('')
-  }
-
-  const handleGameMove = (gameState: GameState) => {
-    if (gameState.currentPlayer === 'O' && !gameState.gameOver) {
-      // Albert's AI logic for tic tac toe
-      const getAlbertMove = (board: (string | null)[]): number => {
-        // Check for winning moves
-        for (let i = 0; i < 9; i++) {
-          if (!board[i]) {
-            const testBoard = [...board]
-            testBoard[i] = 'O'
-            if (checkWinner(testBoard) === 'O') return i
-          }
-        }
-        
-        // Block player's winning moves
-        for (let i = 0; i < 9; i++) {
-          if (!board[i]) {
-            const testBoard = [...board]
-            testBoard[i] = 'X'
-            if (checkWinner(testBoard) === 'X') return i
-          }
-        }
-        
-        // Take center if available
-        if (!board[4]) return 4
-        
-        // Take corners
-        const corners = [0, 2, 6, 8]
-        for (const corner of corners) {
-          if (!board[corner]) return corner
-        }
-        
-        // Take any available spot
-        for (let i = 0; i < 9; i++) {
-          if (!board[i]) return i
-        }
-        
-        return -1
-      }
-
-      setTimeout(() => {
-        const move = getAlbertMove(gameState.board)
-        if (move !== -1) {
-          setAlbertNextMove(move)
-        }
-      }, 1000) // Albert thinks for 1 second
-    }
-  }
-
-  const checkWinner = (board: (string | null)[]): string | null => {
-    const lines = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-      [0, 4, 8], [2, 4, 6] // diagonals
-    ]
-
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i]
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a]
-      }
-    }
-    return null
   }
 
   const handleGameEnd = (result: 'win' | 'lose' | 'draw') => {
@@ -526,7 +462,7 @@ function App() {
               <Video className="h-4 w-4" />
             </Button>
             <Button
-              onClick={startTicTacToe}
+              onClick={() => setShowGame(true)}
               size="sm"
               className="rounded-full h-10 w-10 p-0 bg-yellow-600 hover:bg-yellow-700"
               title="Play Tic Tac Toe"
@@ -629,11 +565,7 @@ function App() {
         <DialogContent className="max-w-md mx-auto">
           <DialogTitle className="text-lg font-bold text-gray-900 mb-4">Tic Tac Toe with Albert</DialogTitle>
           <div className="space-y-4">
-            <TicTacToe
-              onMove={handleGameMove}
-              onGameEnd={handleGameEnd}
-              albertMove={albertNextMove}
-            />
+            <TicTacToe onMove={() => {}} onGameEnd={() => setShowGame(false)} />
           </div>
         </DialogContent>
       </Dialog>
